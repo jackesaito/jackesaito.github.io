@@ -104,15 +104,10 @@
   .s-exp .work .label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
   .s-exp .work .label h3 { font-size: 40px; }
   .s-exp .grid { display: grid; gap: 20px; height: calc(100% - 80px); }
-  .g-flow { grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
-  .g-flow .slot:first-child { grid-row: span 2; }
-  .g-abs { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1.25fr 1fr; }
-  .g-abs .slot:nth-child(4) { grid-column: span 2; }
-  .g-tam { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
-  .s-tamura .side { width: 900px; }
-  .s-tamura .work { left: 980px; }
-  .s-tamura .grid { height: 560px; }
-  .s-tamura .note { margin-top: 32px; font-size: 20px; }
+  /* Posts de Instagram: cartões verticais 4:5, duas fileiras */
+  .s-exp .grid.posts { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 20px; }
+  .posts .slot { flex: none; height: calc(50% - 10px); aspect-ratio: 4 / 5; }
+  .posts.two { max-width: 560px; }
 
   /* ---------- 07 Competências ---------- */
   .s-skills .head { position: absolute; left: var(--pad); top: 170px; width: 620px; }
@@ -296,7 +291,7 @@
     <div class="rows rise d2">
       <div class="row"><span class="n">01</span><h3>Flow Tatuapé</h3><p>Marketing e Social Media</p><span class="tag olive">Estágio · Gastronomia</span></div>
       <div class="row"><span class="n">02</span><h3>Absoluta Seguros</h3><p>Marketing e Comunicação</p><span class="tag olive">Estágio · Seguros</span></div>
-      <div class="row"><span class="n">03</span><h3>Tamura Store</h3><p>Comunicação e Conteúdo</p><span class="tag">Varejo</span></div>
+      <div class="row"><span class="n">03</span><h3>Armazém Real</h3><p>Comunicação e Conteúdo</p><span class="tag">Varejo</span></div>
     </div>
     <div class="folio"><em>03</em> / 12</div>
   </section>
@@ -319,12 +314,12 @@
     </div>
     <div class="work">
       <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Flow Tatuapé</span></div>
-      <div class="grid g-flow">
-        <div class="slot" data-src="assets/flow-1.jpg"><span>Artes para Instagram</span></div>
-        <div class="slot" data-src="assets/flow-2.jpg"><span>Campanha promocional</span></div>
-        <div class="slot" data-src="assets/flow-3.jpg"><span>Material para iFood</span></div>
-        <div class="slot" data-src="assets/flow-4.jpg"><span>Conteúdo gastronômico</span></div>
-        <div class="slot" data-src="assets/flow-5.jpg"><span>Ação com influenciadores</span></div>
+      <div class="grid posts">
+        <div class="slot" data-src="assets/trabalhos/flow-cafe-da-tarde.jpg"><span>Café da tarde</span></div>
+        <div class="slot" data-src="assets/trabalhos/flow-momento.jpg"><span>Seu momento Flow</span></div>
+        <div class="slot" data-src="assets/trabalhos/flow-brasileirinho.jpg"><span>Brasileirinho</span></div>
+        <div class="slot" data-src="assets/trabalhos/flow-guia-sono.jpg"><span>Guia prático do sono</span></div>
+        <div class="slot" data-src="assets/trabalhos/flow-eventos.jpg"><span>Eventos na Flow</span></div>
       </div>
     </div>
     <div class="folio"><em>04</em> / 12</div>
@@ -348,22 +343,21 @@
     </div>
     <div class="work">
       <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Absoluta Seguros</span></div>
-      <div class="grid g-abs">
-        <div class="slot" data-src="assets/absoluta-1.jpg"><span>Arte institucional</span></div>
-        <div class="slot" data-src="assets/absoluta-2.jpg"><span>Campanha promocional</span></div>
-        <div class="slot" data-src="assets/absoluta-3.jpg"><span>Conteúdo para redes</span></div>
-        <div class="slot" data-src="assets/absoluta-4.jpg"><span>Roteiro e vídeo · Reels</span></div>
-        <div class="slot" data-src="assets/absoluta-5.jpg"><span>Endomarketing</span></div>
+      <div class="grid posts two">
+        <div class="slot" data-src="assets/trabalhos/absoluta-sinal.jpg"><span>Ainda esperando um sinal</span></div>
+        <div class="slot" data-src="assets/trabalhos/absoluta-tatica.jpg"><span>A tática perfeita</span></div>
+        <div class="slot" data-src="assets/trabalhos/absoluta-falta-isso.jpg"><span>Falta isso aqui</span></div>
+        <div class="slot" data-src="assets/trabalhos/absoluta-album-vendedores.jpg"><span>Seleção de vendedores · endomarketing</span></div>
       </div>
     </div>
     <div class="folio"><em>05</em> / 12</div>
   </section>
 
-  <!-- 06 · Tamura Store -->
-  <section class="slide s-exp s-tamura">
+  <!-- 06 · Armazém Real -->
+  <section class="slide s-exp">
     <div class="side">
       <div class="eyebrow rise">03 · Varejo</div>
-      <h2 class="rise d1">Tamura Store</h2>
+      <h2 class="rise d1">Armazém Real</h2>
       <div class="role rise d1">Experiência em Comunicação e Conteúdo</div>
       <p class="desc rise d2">Edição e desenvolvimento de anúncios para divulgação de produtos.</p>
       <ul class="list rise d3">
@@ -373,10 +367,12 @@
       </ul>
     </div>
     <div class="work">
-      <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Tamura Store</span></div>
-      <div class="grid g-tam">
-        <div class="slot" data-src="assets/tamura-1.jpg"><span>Anúncio de produto</span></div>
-        <div class="slot" data-src="assets/tamura-2.jpg"><span>Material de divulgação comercial</span></div>
+      <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Armazém Real</span></div>
+      <div class="grid posts two">
+        <div class="slot" data-src="assets/trabalhos/armazem-pimenta.jpg"><span>Pimenta caiena</span></div>
+        <div class="slot" data-src="assets/trabalhos/armazem-canela.jpg"><span>Canela em pó</span></div>
+        <div class="slot" data-src="assets/trabalhos/armazem-top3-inverno.jpg"><span>Top 3 para o inverno</span></div>
+        <div class="slot" data-src="assets/trabalhos/armazem-antes-depois.jpg"><span>Antes e depois</span></div>
       </div>
     </div>
     <div class="folio"><em>06</em> / 12</div>
