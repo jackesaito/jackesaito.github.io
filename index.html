@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jackeline Saito — Portfólio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0e0f0e;
+    --charcoal: #1a1c1b;
+    --charcoal-2: #232624;
+    --line: #333733;
+    --white: #f4f1ea;
+    --offwhite: #d9d5cb;
+    --gray: #8b8f89;
+    --olive: #7f9a78;
+    --olive-deep: #4f6449;
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Manrope", system-ui, sans-serif;
+    --pad: 120px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #070807; color: var(--white); font-family: var(--sans); overflow: hidden; }
+
+  /* ---------- Stage: slides are authored at 1920×1080 and scaled ---------- */
+  .deck { position: fixed; inset: 0; display: grid; place-items: center; }
+  .slide {
+    position: absolute; width: 1920px; height: 1080px;
+    background: var(--charcoal); overflow: hidden;
+    transform-origin: center center;
+    opacity: 0; visibility: hidden; transition: opacity .6s ease, visibility .6s;
+  }
+  .slide.active { opacity: 1; visibility: visible; }
+  .slide.active .rise { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active .rise.d1 { animation-delay: .08s; }
+  .slide.active .rise.d2 { animation-delay: .16s; }
+  .slide.active .rise.d3 { animation-delay: .24s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .slide.active .rise { animation: none; } .slide { transition: none; } }
+
+  /* ---------- Shared chrome ---------- */
+  .chrome { position: absolute; left: var(--pad); right: var(--pad); top: 64px; display: flex; justify-content: space-between;
+    font-size: 15px; letter-spacing: .22em; text-transform: uppercase; color: var(--gray); }
+  .chrome b { color: var(--offwhite); font-weight: 500; }
+  .folio { position: absolute; right: var(--pad); bottom: 60px; font-family: var(--serif); font-size: 22px; color: var(--gray); }
+  .folio em { color: var(--olive); font-style: normal; }
+
+  .eyebrow { font-size: 16px; letter-spacing: .28em; text-transform: uppercase; color: var(--olive); font-weight: 500; }
+  .eyebrow::before { content: ""; display: inline-block; width: 48px; height: 1px; background: var(--olive); vertical-align: middle; margin-right: 18px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.02; letter-spacing: -.01em; }
+  h2 { font-size: 104px; }
+  h2 i, h1 i { color: var(--olive); }
+  p { font-size: 24px; line-height: 1.6; color: var(--offwhite); font-weight: 300; }
+  .muted { color: var(--gray); }
+  .tag { display: inline-block; border: 1px solid var(--line); padding: 10px 18px; font-size: 15px; letter-spacing: .16em; text-transform: uppercase; color: var(--offwhite); }
+  .tag.olive { border-color: var(--olive-deep); color: var(--olive); }
+
+  /* Image slot: shows a labelled frame until the real file exists */
+  .slot { position: relative; background: var(--charcoal-2); border: 1px dashed #464b45; display: grid; place-items: center; overflow: hidden; }
+  .slot span { font-size: 14px; letter-spacing: .2em; text-transform: uppercase; color: #6c716a; text-align: center; padding: 0 24px; line-height: 1.7; }
+  .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .slot.filled { border-style: solid; border-color: transparent; }
+
+  /* ---------- 01 Capa ---------- */
+  .s-cover { background: var(--black); }
+  .s-cover .photo { position: absolute; right: 0; top: 0; width: 760px; height: 100%; border: 0; }
+  .s-cover .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--black) 0%, transparent 28%); pointer-events: none; }
+  .s-cover .mark { position: absolute; left: var(--pad); top: 110px; width: 64px; opacity: .9; }
+  .s-cover .body { position: absolute; left: var(--pad); bottom: 150px; width: 1000px; }
+  .s-cover h1 { font-size: 196px; line-height: .9; margin: 36px 0 44px; }
+  .s-cover .roles { display: flex; gap: 28px; font-size: 22px; letter-spacing: .24em; text-transform: uppercase; color: var(--offwhite); }
+  .s-cover .roles span + span::before { content: "·"; color: var(--olive); margin-right: 28px; }
+  .s-cover .year { position: absolute; left: var(--pad); bottom: 60px; font-size: 15px; letter-spacing: .22em; text-transform: uppercase; color: var(--gray); }
+
+  /* ---------- 02 Sobre ---------- */
+  .s-about .photo { position: absolute; left: var(--pad); top: 170px; width: 560px; height: 760px; }
+  .s-about .body { position: absolute; left: 800px; right: var(--pad); top: 190px; }
+  .s-about h2 { margin: 32px 0 48px; }
+  .s-about p + p { margin-top: 24px; }
+  .s-about .segments { display: flex; gap: 14px; margin-top: 56px; }
+
+  /* ---------- 03 Trajetória ---------- */
+  .s-path .head { position: absolute; left: var(--pad); top: 170px; }
+  .s-path h2 { margin-top: 28px; }
+  .s-path .rows { position: absolute; left: var(--pad); right: var(--pad); top: 500px; border-top: 1px solid var(--line); }
+  .s-path .row { display: grid; grid-template-columns: 110px 1fr 1fr 260px; align-items: baseline; gap: 40px; padding: 44px 0; border-bottom: 1px solid var(--line); }
+  .s-path .row .n { font-family: var(--serif); font-size: 30px; color: var(--olive); }
+  .s-path .row h3 { font-size: 56px; }
+  .s-path .row p { font-size: 22px; }
+  .s-path .row .tag { justify-self: end; }
+
+  /* ---------- 04–06 Experiência + projeto ---------- */
+  .s-exp .side { position: absolute; left: 0; top: 0; bottom: 0; width: 760px; background: var(--black); padding: 170px 80px 0 var(--pad); }
+  .s-exp .side h2 { font-size: 92px; margin: 30px 0 22px; }
+  .s-exp .side .role { font-size: 22px; color: var(--offwhite); margin-bottom: 30px; }
+  .s-exp .side p.desc { font-size: 21px; }
+  .s-exp .list { list-style: none; margin-top: 40px; }
+  .s-exp .list li { font-size: 20px; color: var(--offwhite); padding: 13px 0; border-bottom: 1px solid var(--line); display: flex; gap: 18px; font-weight: 300; }
+  .s-exp .list li::before { content: ""; width: 6px; height: 6px; background: var(--olive); margin-top: 11px; flex: none; transform: rotate(45deg); }
+  .s-exp .work { position: absolute; left: 840px; right: var(--pad); top: 170px; bottom: 140px; }
+  .s-exp .work .label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
+  .s-exp .work .label h3 { font-size: 40px; }
+  .s-exp .grid { display: grid; gap: 20px; height: calc(100% - 80px); }
+  .g-flow { grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .g-flow .slot:first-child { grid-row: span 2; }
+  .g-abs { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1.25fr 1fr; }
+  .g-abs .slot:nth-child(4) { grid-column: span 2; }
+  .g-tam { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+  .s-tamura .side { width: 900px; }
+  .s-tamura .work { left: 980px; }
+  .s-tamura .grid { height: 560px; }
+  .s-tamura .note { margin-top: 32px; font-size: 20px; }
+
+  /* ---------- 07 Competências ---------- */
+  .s-skills .head { position: absolute; left: var(--pad); top: 170px; width: 620px; }
+  .s-skills h2 { margin: 28px 0 32px; }
+  .s-skills .cols { position: absolute; left: 820px; right: var(--pad); top: 170px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 72px; row-gap: 64px; }
+  .s-skills .col h3 { font-size: 38px; padding-bottom: 18px; border-bottom: 1px solid var(--olive-deep); margin-bottom: 18px; display: flex; gap: 16px; align-items: baseline; }
+  .s-skills .col h3 small { font-family: var(--sans); font-size: 15px; color: var(--olive); letter-spacing: .14em; }
+  .s-skills .col li { list-style: none; font-size: 21px; color: var(--offwhite); padding: 7px 0; font-weight: 300; }
+
+  /* ---------- 08 Ferramentas ---------- */
+  .s-tools { background: var(--black); }
+  .s-tools .head { position: absolute; left: var(--pad); right: var(--pad); top: 170px; display: flex; justify-content: space-between; align-items: end; }
+  .s-tools h2 { margin-top: 28px; }
+  .s-tools .legend { display: flex; gap: 36px; font-size: 16px; color: var(--gray); letter-spacing: .12em; text-transform: uppercase; }
+  .s-tools .cards { position: absolute; left: var(--pad); right: var(--pad); top: 440px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .s-tools .folio { bottom: 36px; }
+  .tool { background: var(--charcoal); border: 1px solid var(--line); padding: 36px 40px; display: grid; grid-template-columns: 72px 1fr; column-gap: 28px; row-gap: 20px; align-items: center; }
+  .tool.adv { border-color: var(--olive-deep); }
+  .tool .mono { width: 72px; height: 72px; border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--serif); font-size: 34px; color: var(--white); }
+  .tool.adv .mono { background: var(--olive-deep); border-color: var(--olive-deep); }
+  .tool h3 { font-size: 38px; }
+  .tool .use { grid-column: 1 / -1; font-size: 18px; color: var(--gray); line-height: 1.5; min-height: 54px; }
+  .tool .lvl { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; font-size: 15px; letter-spacing: .16em; text-transform: uppercase; color: var(--offwhite); }
+  .meter { display: flex; gap: 6px; flex: 1; }
+  .meter i { height: 3px; flex: 1; background: var(--line); }
+  .meter i.on { background: var(--olive); }
+
+  /* ---------- 09 Resultados ---------- */
+  .s-results .head { position: absolute; left: var(--pad); top: 170px; width: 900px; }
+  .s-results h2 { margin: 28px 0 32px; }
+  .s-results .nums { position: absolute; left: var(--pad); right: var(--pad); bottom: 170px; display: grid; grid-template-columns: 1.4fr 1fr 1fr; border-top: 1px solid var(--line); }
+  .s-results .num { padding: 48px 48px 0 0; }
+  .s-results .num + .num { padding-left: 48px; border-left: 1px solid var(--line); }
+  .s-results .num strong { display: block; font-family: var(--serif); font-weight: 400; font-size: 220px; line-height: .9; color: var(--white); }
+  .s-results .num:first-child strong { color: var(--olive); }
+  .s-results .num span { display: block; margin-top: 18px; font-size: 18px; letter-spacing: .2em; text-transform: uppercase; color: var(--offwhite); }
+  .s-results .aside { position: absolute; right: var(--pad); top: 200px; width: 440px; border-left: 1px solid var(--olive-deep); padding-left: 32px; }
+  .s-results .aside p { font-size: 19px; color: var(--gray); }
+
+  /* ---------- 10 Processo ---------- */
+  .s-process .head { position: absolute; left: var(--pad); top: 170px; }
+  .s-process h2 { margin-top: 28px; }
+  .s-process .steps { position: absolute; left: var(--pad); right: var(--pad); top: 520px; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .s-process .step { padding: 0 36px 0 0; position: relative; }
+  .s-process .step .n { font-family: var(--serif); font-size: 120px; line-height: 1; color: #3a3f39; }
+  .s-process .step .bar { height: 1px; background: var(--line); margin: 28px 0 32px; position: relative; }
+  .s-process .step .bar::before { content: ""; position: absolute; left: 0; top: -4px; width: 9px; height: 9px; background: var(--olive); transform: rotate(45deg); }
+  .s-process .step h3 { font-size: 44px; margin-bottom: 16px; }
+  .s-process .step p { font-size: 20px; }
+
+  /* ---------- 11 Formação ---------- */
+  .s-edu { background: var(--black); }
+  .s-edu .bg { position: absolute; right: 0; top: 0; bottom: 0; width: 820px; background: radial-gradient(circle at 70% 40%, #2b3529, var(--black) 70%); opacity: .9; }
+  .s-edu .bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--black), transparent 60%); }
+  .s-edu .body { position: absolute; left: var(--pad); top: 170px; width: 1000px; }
+  .s-edu h2 { margin: 28px 0 56px; }
+  .s-edu .course { border-top: 1px solid var(--line); padding-top: 40px; }
+  .s-edu .course h3 { font-size: 64px; }
+  .s-edu .course .inst { font-size: 24px; color: var(--offwhite); margin: 14px 0 28px; }
+  .s-edu .topics { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px; }
+
+  /* ---------- 12 Contato ---------- */
+  .s-contact { background: var(--black); }
+  .s-contact .quote { position: absolute; left: var(--pad); top: 180px; width: 1300px; }
+  .s-contact .quote blockquote { font-family: var(--serif); font-size: 84px; line-height: 1.08; font-style: italic; color: var(--white); margin-top: 40px; }
+  .s-contact .quote blockquote em { color: var(--olive); }
+  .s-contact .foot { position: absolute; left: var(--pad); right: var(--pad); bottom: 110px; display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 48px; border-top: 1px solid var(--line); padding-top: 44px; }
+  .s-contact .foot h3 { font-size: 46px; }
+  .s-contact .foot .k { font-size: 14px; letter-spacing: .24em; text-transform: uppercase; color: var(--olive); margin-bottom: 14px; }
+  .s-contact .foot .v { font-size: 22px; color: var(--offwhite); font-weight: 300; }
+  .s-contact .foot .v.empty { color: #5d625b; border-bottom: 1px dashed #464b45; padding-bottom: 6px; }
+  .s-contact .mark { position: absolute; right: var(--pad); top: 160px; width: 110px; opacity: .85; }
+
+  /* ---------- Animações de entrada por slide ---------- */
+  @keyframes reveal { from { clip-path: inset(0 0 100% 0); transform: scale(1.08); } to { clip-path: inset(0); transform: scale(1); } }
+  @keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes drift { from { transform: scale(1.06); } to { transform: scale(1); } }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .slide.active .slot img { animation: reveal 1.2s cubic-bezier(.7,0,.2,1) both; }
+  .slide.active .grid .slot:nth-child(2) img { animation-delay: .1s; }
+  .slide.active .grid .slot:nth-child(3) img { animation-delay: .2s; }
+  .slide.active .grid .slot:nth-child(4) img { animation-delay: .3s; }
+  .slide.active .grid .slot:nth-child(5) img { animation-delay: .4s; }
+  .slide.active.s-cover .photo img { animation: reveal 1.4s cubic-bezier(.7,0,.2,1) both, drift 9s 1.4s ease-out both; }
+  .slide.active .mark { animation: fade 1.6s .4s both; }
+  .slide.active .eyebrow::before { transform-origin: left; animation: draw .8s .2s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active .s-path .row, .slide.active.s-path .row { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active.s-path .row:nth-child(2) { animation-delay: .15s; }
+  .slide.active.s-path .row:nth-child(3) { animation-delay: .3s; }
+  .slide.active .step .bar { transform-origin: left; animation: draw .9s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active .step { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active .step:nth-child(2), .slide.active .step:nth-child(2) .bar { animation-delay: .12s; }
+  .slide.active .step:nth-child(3), .slide.active .step:nth-child(3) .bar { animation-delay: .24s; }
+  .slide.active .step:nth-child(4), .slide.active .step:nth-child(4) .bar { animation-delay: .36s; }
+  .slide.active .step:nth-child(5), .slide.active .step:nth-child(5) .bar { animation-delay: .48s; }
+  .slide.active .meter i.on { transform-origin: left; animation: draw .5s .5s both; }
+  .slide.active .meter i.on:nth-child(2) { animation-delay: .65s; }
+  .slide.active .meter i.on:nth-child(3) { animation-delay: .8s; }
+  .slide.active .tool { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active .tool:nth-child(n+4) { animation-delay: .12s; }
+  .slide.active.s-edu .bg { animation: fade 1.8s both, drift 10s ease-out both; }
+  .slide.active .list li { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active .list li:nth-child(2) { animation-delay: .32s; } .slide.active .list li:nth-child(3) { animation-delay: .38s; }
+  .slide.active .list li:nth-child(4) { animation-delay: .44s; } .slide.active .list li:nth-child(5) { animation-delay: .5s; }
+  .slide.active .list li:nth-child(6) { animation-delay: .56s; }
+  @media (prefers-reduced-motion: reduce) { .slide.active * { animation: none !important; } }
+
+  /* ---------- Modo edição (só aparece após login) ---------- */
+  .editbar { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; gap: 6px; align-items: center;
+    background: rgba(14,15,14,.92); border: 1px solid var(--olive-deep); padding: 8px 10px 8px 18px; font: 13px var(--sans); color: var(--offwhite); }
+  .editbar b { color: var(--olive); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; margin-right: 10px; }
+  .editbar button { background: none; border: 1px solid var(--line); color: var(--offwhite); font: 500 12px var(--sans); letter-spacing: .12em; text-transform: uppercase; padding: 8px 14px; cursor: pointer; }
+  .editbar button:hover { border-color: var(--olive); color: var(--white); }
+  .editbar button.primary { background: var(--olive-deep); border-color: var(--olive-deep); }
+  .editbar .status { min-width: 110px; color: var(--gray); font-size: 12px; text-align: center; }
+  body.editing [contenteditable] { outline: 1px dashed transparent; outline-offset: 6px; transition: outline-color .2s; cursor: text; }
+  body.editing [contenteditable]:hover { outline-color: rgba(127,154,120,.55); }
+  body.editing [contenteditable]:focus { outline: 1px solid var(--olive); }
+  body.editing .slot, body.editing img.mark, body.editing .meter { cursor: pointer; }
+  body.editing .slot:hover::after { content: "Trocar imagem"; position: absolute; inset: auto 16px 16px auto; z-index: 2; background: var(--olive-deep); color: var(--white);
+    font: 500 13px var(--sans); letter-spacing: .14em; text-transform: uppercase; padding: 10px 14px; }
+  body.editing .s-cover .photo:hover::after { background: var(--olive-deep); }
+  body.editing .slide * { animation: none !important; }
+
+  /* ---------- Navigation UI ---------- */
+  .nav { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 8px; align-items: center; z-index: 10;
+    background: rgba(14,15,14,.8); border: 1px solid var(--line); padding: 8px 12px; backdrop-filter: blur(6px); transition: opacity .3s; }
+  .nav button { background: none; border: 0; color: var(--offwhite); font: 500 13px var(--sans); letter-spacing: .14em; padding: 8px 12px; cursor: pointer; }
+  .nav button:hover { color: var(--olive); }
+  .nav .count { font: 13px var(--sans); color: var(--gray); letter-spacing: .14em; min-width: 64px; text-align: center; }
+  body.idle .nav { opacity: 0; }
+
+  /* ---------- Print / PDF: one slide per 1920×1080 page ---------- */
+  @page { size: 1920px 1080px; margin: 0; }
+  @media print {
+    html, body { overflow: visible; height: auto; background: none; }
+    .deck { position: static; display: block; }
+    .slide { position: relative; opacity: 1; visibility: visible; transform: none !important; page-break-after: always; break-after: page; }
+    .slide .rise { animation: none !important; }
+    .nav { display: none; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<main class="deck" id="deck">
+<!--DECK-->
+<!-- 01 · Capa -->
+  <section class="slide s-cover">
+    <div class="slot photo" data-src="assets/jackeline-capa.jpg"><span>Fotografia profissional<br>assets/jackeline-capa.jpg</span></div>
+    <img class="mark" src="simbolo-claro.png" alt="">
+    <div class="body">
+      <div class="eyebrow rise">Portfólio profissional</div>
+      <h1 class="rise d1">Jackeline<br><i>Saito</i></h1>
+      <div class="roles rise d2"><span>Marketing</span><span>Social Media</span><span>Comunicação</span></div>
+    </div>
+    <div class="year">São Paulo — SP</div>
+  </section>
+
+  <!-- 02 · Sobre -->
+  <section class="slide s-about">
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Sobre mim</span></div>
+    <div class="slot photo" data-src="assets/jackeline-sobre.jpg"><span>Fotografia profissional<br>assets/jackeline-sobre.jpg</span></div>
+    <div class="body">
+      <div class="eyebrow rise">Sobre mim</div>
+      <h2 class="rise d1">Do planejamento<br>à <i>publicação.</i></h2>
+      <p class="rise d2">Sou profissional de Marketing, com experiência prática em marketing digital, gestão de redes sociais, planejamento de conteúdo, criação de campanhas e comunicação de marcas.</p>
+      <p class="rise d2">Atuo tanto na parte criativa quanto na operacional — do calendário de publicações à produção de vídeos, materiais gráficos, campanhas promocionais e acompanhamento de resultados.</p>
+      <div class="segments rise d3"><span class="tag olive">Gastronomia</span><span class="tag olive">Seguros</span><span class="tag olive">Varejo</span></div>
+    </div>
+    <div class="folio"><em>02</em> / 12</div>
+  </section>
+
+  <!-- 03 · Trajetória -->
+  <section class="slide s-path">
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Trajetória</span></div>
+    <div class="head">
+      <div class="eyebrow rise">Experiência profissional</div>
+      <h2 class="rise d1">Três segmentos,<br>uma <i>mesma atenção</i> à marca.</h2>
+    </div>
+    <div class="rows rise d2">
+      <div class="row"><span class="n">01</span><h3>Flow Tatuapé</h3><p>Marketing e Social Media</p><span class="tag olive">Estágio · Gastronomia</span></div>
+      <div class="row"><span class="n">02</span><h3>Absoluta Seguros</h3><p>Marketing e Comunicação</p><span class="tag olive">Estágio · Seguros</span></div>
+      <div class="row"><span class="n">03</span><h3>Tamura Store</h3><p>Comunicação e Conteúdo</p><span class="tag">Varejo</span></div>
+    </div>
+    <div class="folio"><em>03</em> / 12</div>
+  </section>
+
+  <!-- 04 · Flow Tatuapé -->
+  <section class="slide s-exp">
+    <div class="side">
+      <div class="eyebrow rise">01 · Gastronomia</div>
+      <h2 class="rise d1">Flow Tatuapé</h2>
+      <div class="role rise d1">Estágio em Marketing e Social Media</div>
+      <p class="desc rise d2">Ações de marketing e comunicação digital para o restaurante, com foco na divulgação da marca, relacionamento com o público e presença nas redes sociais.</p>
+      <ul class="list rise d3">
+        <li>Planejamento de conteúdo e calendário editorial</li>
+        <li>Criação de posts, stories e materiais promocionais</li>
+        <li>Desenvolvimento de campanhas comerciais</li>
+        <li>Relacionamento com influenciadores digitais</li>
+        <li>Materiais gráficos para divulgação no iFood</li>
+        <li>Organização da identidade visual da marca</li>
+      </ul>
+    </div>
+    <div class="work">
+      <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Flow Tatuapé</span></div>
+      <div class="grid g-flow">
+        <div class="slot" data-src="assets/flow-1.jpg"><span>Artes para Instagram</span></div>
+        <div class="slot" data-src="assets/flow-2.jpg"><span>Campanha promocional</span></div>
+        <div class="slot" data-src="assets/flow-3.jpg"><span>Material para iFood</span></div>
+        <div class="slot" data-src="assets/flow-4.jpg"><span>Conteúdo gastronômico</span></div>
+        <div class="slot" data-src="assets/flow-5.jpg"><span>Ação com influenciadores</span></div>
+      </div>
+    </div>
+    <div class="folio"><em>04</em> / 12</div>
+  </section>
+
+  <!-- 05 · Absoluta Seguros -->
+  <section class="slide s-exp">
+    <div class="side">
+      <div class="eyebrow rise">02 · Seguros</div>
+      <h2 class="rise d1">Absoluta Seguros</h2>
+      <div class="role rise d1">Estágio em Marketing e Comunicação</div>
+      <p class="desc rise d2">Comunicação digital e institucional, contribuindo para a divulgação de serviços, campanhas comerciais e o relacionamento com o público.</p>
+      <ul class="list rise d3">
+        <li>Conteúdos para feed e stories</li>
+        <li>Campanhas promocionais e institucionais</li>
+        <li>Roteiros, gravação e edição de Reels</li>
+        <li>Ações de endomarketing</li>
+        <li>Divulgação de eventos e parcerias comerciais</li>
+        <li>Materiais de comunicação institucional</li>
+      </ul>
+    </div>
+    <div class="work">
+      <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Absoluta Seguros</span></div>
+      <div class="grid g-abs">
+        <div class="slot" data-src="assets/absoluta-1.jpg"><span>Arte institucional</span></div>
+        <div class="slot" data-src="assets/absoluta-2.jpg"><span>Campanha promocional</span></div>
+        <div class="slot" data-src="assets/absoluta-3.jpg"><span>Conteúdo para redes</span></div>
+        <div class="slot" data-src="assets/absoluta-4.jpg"><span>Roteiro e vídeo · Reels</span></div>
+        <div class="slot" data-src="assets/absoluta-5.jpg"><span>Endomarketing</span></div>
+      </div>
+    </div>
+    <div class="folio"><em>05</em> / 12</div>
+  </section>
+
+  <!-- 06 · Tamura Store -->
+  <section class="slide s-exp s-tamura">
+    <div class="side">
+      <div class="eyebrow rise">03 · Varejo</div>
+      <h2 class="rise d1">Tamura Store</h2>
+      <div class="role rise d1">Experiência em Comunicação e Conteúdo</div>
+      <p class="desc rise d2">Edição e desenvolvimento de anúncios para divulgação de produtos.</p>
+      <ul class="list rise d3">
+        <li>Edição de anúncios</li>
+        <li>Preparação de materiais de divulgação</li>
+        <li>Apoio à apresentação comercial dos produtos</li>
+      </ul>
+    </div>
+    <div class="work">
+      <div class="label"><h3>Trabalhos realizados</h3><span class="tag">Projeto Tamura Store</span></div>
+      <div class="grid g-tam">
+        <div class="slot" data-src="assets/tamura-1.jpg"><span>Anúncio de produto</span></div>
+        <div class="slot" data-src="assets/tamura-2.jpg"><span>Material de divulgação comercial</span></div>
+      </div>
+    </div>
+    <div class="folio"><em>06</em> / 12</div>
+  </section>
+
+  <!-- 07 · Competências -->
+  <section class="slide s-skills">
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Competências</span></div>
+    <div class="head">
+      <div class="eyebrow rise">Competências</div>
+      <h2 class="rise d1">Estratégia<br>e <i>execução</i>.</h2>
+      <p class="rise d2 muted">Habilidades construídas na prática, organizadas em quatro frentes complementares.</p>
+    </div>
+    <div class="cols rise d2">
+      <div class="col"><h3><small>01</small>Marketing e Estratégia</h3><ul>
+        <li>Planejamento de marketing</li><li>Campanhas promocionais</li><li>Branding e posicionamento</li><li>Planejamento estratégico de conteúdo</li><li>Comunicação comercial</li></ul></div>
+      <div class="col"><h3><small>02</small>Social Media</h3><ul>
+        <li>Gestão de redes sociais</li><li>Calendário editorial</li><li>Criação de posts e stories</li><li>Produção de Reels</li><li>Análise de métricas</li></ul></div>
+      <div class="col"><h3><small>03</small>Criação e Comunicação</h3><ul>
+        <li>Design de materiais gráficos</li><li>Edição de imagens e vídeos</li><li>Produção de roteiros</li><li>Comunicação institucional</li><li>Endomarketing e divulgação de eventos</li></ul></div>
+      <div class="col"><h3><small>04</small>Marketing Digital</h3><ul>
+        <li>Meta Ads</li><li>Google Ads — noções básicas</li><li>SEO</li><li>SEO para e-commerce</li><li>Acompanhamento de campanhas</li></ul></div>
+    </div>
+    <div class="folio"><em>07</em> / 12</div>
+  </section>
+
+  <!-- 08 · Ferramentas -->
+  <section class="slide s-tools">
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Ferramentas</span></div>
+    <div class="head">
+      <div><div class="eyebrow rise">Ferramentas</div><h2 class="rise d1">Repertório <i>técnico</i>.</h2></div>
+      <div class="legend rise d2"><span>Básico · 1/3</span><span>Avançado · 3/3</span></div>
+    </div>
+    <div class="cards rise d2">
+      <div class="tool adv"><div class="mono">Ca</div><h3>Canva</h3><p class="use">Criação de posts, stories e materiais gráficos.</p>
+        <div class="lvl">Avançado <div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i></div></div></div>
+      <div class="tool"><div class="mono">Fi</div><h3>Figma</h3><p class="use">Layouts e peças visuais.</p>
+        <div class="lvl">Básico <div class="meter"><i class="on"></i><i></i><i></i></div></div></div>
+      <div class="tool"><div class="mono">Cc</div><h3>CapCut</h3><p class="use">Edição de vídeos e Reels.</p>
+        <div class="lvl">Básico <div class="meter"><i class="on"></i><i></i><i></i></div></div></div>
+      <div class="tool"><div class="mono">Ps</div><h3>Photoshop</h3><p class="use">Edição e tratamento de imagens.</p>
+        <div class="lvl">Básico <div class="meter"><i class="on"></i><i></i><i></i></div></div></div>
+      <div class="tool"><div class="mono">Me</div><h3>Meta Business Suite</h3><p class="use">Publicações e acompanhamento de métricas.</p>
+        <div class="lvl">Básico <div class="meter"><i class="on"></i><i></i><i></i></div></div></div>
+      <div class="tool"><div class="mono">Ga</div><h3>Google Ads</h3><p class="use">Noções de campanhas pagas.</p>
+        <div class="lvl">Básico <div class="meter"><i class="on"></i><i></i><i></i></div></div></div>
+    </div>
+    <div class="folio"><em>08</em> / 12</div>
+  </section>
+
+  <!-- 09 · Resultados -->
+  <section class="slide s-results">
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Resultados</span></div>
+    <div class="head">
+      <div class="eyebrow rise">Resultados e métricas</div>
+      <h2 class="rise d1">Acompanhar para<br><i>evoluir</i>.</h2>
+    </div>
+    <div class="aside rise d2"><p>Exemplo real de uma campanha digital acompanhada, com análise dos indicadores de desempenho ao longo da veiculação.</p></div>
+    <div class="nums rise d3">
+      <div class="num"><strong>2.962</strong><span>Visualizações</span></div>
+      <div class="num"><strong>128</strong><span>Visitas ao perfil</span></div>
+      <div class="num"><strong>38</strong><span>Novos seguidores</span></div>
+    </div>
+    <div class="folio"><em>09</em> / 12</div>
+  </section>
+
+  <!-- 10 · Processo -->
+  <section class="slide s-process">
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Processo</span></div>
+    <div class="head">
+      <div class="eyebrow rise">Metodologia</div>
+      <h2 class="rise d1">Como eu <i>trabalho</i>.</h2>
+    </div>
+    <div class="steps rise d2">
+      <div class="step"><div class="n">01</div><div class="bar"></div><h3>Planejamento</h3><p>Compreensão dos objetivos e necessidades da marca.</p></div>
+      <div class="step"><div class="n">02</div><div class="bar"></div><h3>Estratégia</h3><p>Definição do público, linguagem e abordagem.</p></div>
+      <div class="step"><div class="n">03</div><div class="bar"></div><h3>Criação</h3><p>Desenvolvimento de conteúdos e materiais visuais.</p></div>
+      <div class="step"><div class="n">04</div><div class="bar"></div><h3>Execução</h3><p>Publicação e acompanhamento das ações.</p></div>
+      <div class="step"><div class="n">05</div><div class="bar"></div><h3>Análise</h3><p>Avaliação de métricas e oportunidades de melhoria.</p></div>
+    </div>
+    <div class="folio"><em>10</em> / 12</div>
+  </section>
+
+  <!-- 11 · Formação -->
+  <section class="slide s-edu">
+    <div class="bg"></div>
+    <div class="chrome"><span><b>Jackeline Saito</b></span><span>Formação</span></div>
+    <div class="body">
+      <div class="eyebrow rise">Formação acadêmica</div>
+      <h2 class="rise d1">Aprendizado<br><i>contínuo</i>.</h2>
+      <div class="course rise d2">
+        <span class="tag olive">Em andamento</span>
+        <h3 style="margin-top:28px">Tecnólogo em Marketing Digital</h3>
+        <div class="inst">Universidade Cruzeiro do Sul — EAD</div>
+        <div class="topics">
+          <span class="tag">Marketing de conteúdo</span><span class="tag">Comportamento do consumidor</span><span class="tag">Experiência do usuário</span><span class="tag">Comunicação empresarial</span><span class="tag">Design web</span>
+        </div>
+      </div>
+    </div>
+    <div class="folio"><em>11</em> / 12</div>
+  </section>
+
+  <!-- 12 · Contato -->
+  <section class="slide s-contact">
+    <img class="mark" src="simbolo-claro.png" alt="">
+    <div class="quote">
+      <div class="eyebrow rise">Vamos conversar</div>
+      <blockquote class="rise d1">“Marketing vai além de comunicar: é <em>compreender, conectar</em> e construir valor para marcas e pessoas.”</blockquote>
+    </div>
+    <div class="foot rise d2">
+      <div><h3>Jackeline Saito</h3><p class="muted" style="font-size:18px;margin-top:8px">Marketing | Social Media | Comunicação<br>São Paulo — SP</p></div>
+      <div><div class="k">E-mail</div><div class="v empty">seu@email.com</div></div>
+      <div><div class="k">WhatsApp</div><div class="v empty">(11) 00000-0000</div></div>
+      <div><div class="k">LinkedIn</div><div class="v empty">linkedin.com/in/…</div></div>
+    </div>
+  </section>
+<!--/DECK-->
+</main>
+
+<nav class="nav" aria-label="Navegação">
+  <button id="prev" aria-label="Anterior">←</button>
+  <span class="count" id="count">01 / 12</span>
+  <button id="next" aria-label="Próximo">→</button>
+  <button id="pdf" title="Exportar PDF">PDF</button>
+</nav>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const count = document.getElementById('count');
+  let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);
+
+  // Fill image slots only when the real file exists, otherwise keep the labelled frame
+  document.querySelectorAll('.slot[data-src]').forEach(slot => {
+    const img = new Image();
+    img.className = 'js';
+    img.onload = () => { slot.prepend(img); slot.classList.add('filled'); };
+    img.src = slot.dataset.src;
+  });
+
+  const fit = () => {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    slides.forEach(el => el.style.transform = `scale(${s})`);
+  };
+  const go = n => {
+    i = (n + slides.length) % slides.length;
+    slides.forEach((el, k) => el.classList.toggle('active', k === i));
+    count.textContent = `${String(i + 1).padStart(2, '0')} / ${slides.length}`;
+    history.replaceState(null, '', `${location.search}#${i + 1}`);
+    countUp(slides[i]);
+  };
+
+  // Números dos resultados contam do zero ao valor final
+  const countUp = slide => {
+    if (document.body.classList.contains('editing')) return;
+    slide.querySelectorAll('.num strong').forEach(el => {
+      const final = el.dataset.final || (el.dataset.final = el.textContent.trim());
+      const target = parseInt(final.replace(/\D/g, ''), 10);
+      if (!target) return;
+      const t0 = performance.now(), dur = 1600;
+      const tick = now => {
+        const p = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * e).toLocaleString('pt-BR');
+        if (p < 1 && slide.classList.contains('active')) requestAnimationFrame(tick); else el.textContent = final;
+      };
+      requestAnimationFrame(tick);
+    });
+  };
+
+  addEventListener('resize', fit);
+  addEventListener('keydown', e => {
+    if (e.target.isContentEditable || e.target.tagName === 'INPUT') return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) go(i + 1);
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) go(i - 1);
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length - 1);
+  });
+  document.getElementById('prev').onclick = () => go(i - 1);
+  document.getElementById('next').onclick = () => go(i + 1);
+  document.getElementById('pdf').onclick = () => print();
+
+  let tx = null;
+  addEventListener('touchstart', e => tx = e.touches[0].clientX, { passive: true });
+  addEventListener('touchend', e => {
+    if (tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1));
+    tx = null;
+  });
+
+  let idle;
+  addEventListener('mousemove', () => {
+    document.body.classList.remove('idle');
+    clearTimeout(idle);
+    idle = setTimeout(() => document.body.classList.add('idle'), 2500);
+  });
+
+  fit(); go(i);
+})();
+
+// ---------- Editor: ativo em /?editar para quem fez login ----------
+(async () => {
+  if (!location.search.includes('editar')) return;
+  const me = await fetch('/api/me').then(r => r.json()).catch(() => ({}));
+  if (!me.auth) return location.href = '/login';
+
+  const deck = document.getElementById('deck');
+  const INLINE = ['I', 'EM', 'B', 'BR', 'SMALL', 'STRONG'];
+  let dirty = false;
+
+  document.body.classList.add('editing');
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="editbar">
+      <b>Modo edição</b>
+      <span class="status" id="st">Clique para editar</span>
+      <button class="primary" id="save">Salvar</button>
+      <button id="view">Visualizar</button>
+      <button id="pw">Alterar senha</button>
+      <button id="out">Sair</button>
+    </div>
+    <input type="file" id="file" accept="image/*" hidden>`);
+  const st = document.getElementById('st');
+  const mark = () => { dirty = true; st.textContent = 'Alterações não salvas'; };
+
+  // Todo texto folha (ou com apenas formatação inline) vira editável
+  deck.querySelectorAll('.slide *').forEach(el => {
+    if (el.closest('[contenteditable]') || el.closest('.slot') || el.closest('.meter')) return;
+    if (!el.textContent.trim() || ['IMG', 'BR'].includes(el.tagName)) return;
+    if ([...el.children].every(c => INLINE.includes(c.tagName))) el.contentEditable = 'true';
+  });
+  deck.addEventListener('input', mark);
+  deck.addEventListener('paste', e => {
+    e.preventDefault();
+    document.execCommand('insertText', false, e.clipboardData.getData('text/plain'));
+  });
+
+  // Imagens: clique no espaço reservado ou no símbolo para enviar outra
+  const file = document.getElementById('file');
+  let target = null;
+  deck.addEventListener('click', e => {
+    const meterCell = e.target.closest('.meter i');
+    if (meterCell) {
+      const cells = [...meterCell.parentNode.children], n = cells.indexOf(meterCell);
+      cells.forEach((c, k) => c.classList.toggle('on', k <= n));
+      return mark();
+    }
+    target = e.target.closest('.slot, img.mark');
+    if (target) file.click();
+  });
+  file.onchange = async () => {
+    const f = file.files[0]; file.value = '';
+    if (!f || !target) return;
+    st.textContent = 'Enviando imagem…';
+    const r = await fetch('/api/upload?name=' + encodeURIComponent(f.name), { method: 'POST', body: f });
+    if (!r.ok) return st.textContent = 'Falha no envio';
+    const { src } = await r.json();
+    if (target.tagName === 'IMG') target.src = src;
+    else {
+      target.dataset.src = src;
+      target.querySelector('img.js')?.remove();
+      const img = new Image(); img.className = 'js'; img.src = src;
+      target.prepend(img); target.classList.add('filled');
+    }
+    mark();
+  };
+
+  // Salva o HTML do deck sem o estado de execução
+  const serialize = () => {
+    const c = deck.cloneNode(true);
+    c.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    c.querySelectorAll('img.js').forEach(el => el.remove());
+    c.querySelectorAll('.slide').forEach(el => { el.classList.remove('active'); el.removeAttribute('style'); });
+    c.querySelectorAll('.slot').forEach(el => el.classList.remove('filled'));
+    c.querySelectorAll('[data-final]').forEach(el => { el.textContent = el.dataset.final; el.removeAttribute('data-final'); });
+    return c.innerHTML.replace(/<!--\/?DECK-->/g, '').trim();
+  };
+  const save = async () => {
+    st.textContent = 'Salvando…';
+    const r = await fetch('/api/save', { method: 'POST', body: serialize() });
+    st.textContent = r.ok ? 'Salvo ✓' : 'Erro ao salvar';
+    if (r.ok) dirty = false;
+  };
+  document.getElementById('save').onclick = save;
+  addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); } });
+  document.getElementById('view').onclick = () => {
+    if (dirty && !confirm('Há alterações não salvas. Sair do modo edição mesmo assim?')) return;
+    location.href = '/' + location.hash;
+  };
+  document.getElementById('out').onclick = async () => {
+    if (dirty && !confirm('Há alterações não salvas. Sair mesmo assim?')) return;
+    await fetch('/api/logout', { method: 'POST' }); location.href = '/';
+  };
+  document.getElementById('pw').onclick = async () => {
+    const current = prompt('Senha atual:'); if (!current) return;
+    const next = prompt('Nova senha (mínimo 8 caracteres):'); if (!next) return;
+    const r = await fetch('/api/password', { method: 'POST', body: JSON.stringify({ current, next }) });
+    alert(r.ok ? 'Senha alterada.' : 'Não foi possível alterar: confira a senha atual e use 8+ caracteres.');
+  };
+  addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+})();
+</script>
+</body>
+</html>
