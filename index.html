@@ -580,8 +580,8 @@
 // ---------- Editor: ativo em /?editar para quem fez login ----------
 (async () => {
   if (!location.search.includes('editar')) return;
-  const me = await fetch('/api/me').then(r => r.json()).catch(() => ({}));
-  if (!me.auth) return location.href = '/login';
+  const api = location.hostname.endsWith('github.io') ? githubApi() : localApi();
+  if (!(await api.auth())) return location.href = '/login';
 
   const deck = document.getElementById('deck');
   const INLINE = ['I', 'EM', 'B', 'BR', 'SMALL', 'STRONG'];
@@ -594,7 +594,7 @@
       <span class="status" id="st">Clique para editar</span>
       <button class="primary" id="save">Salvar</button>
       <button id="view">Visualizar</button>
-      <button id="pw">Alterar senha</button>
+      ${api.password ? '<button id="pw">Alterar senha</button>' : ''}
       <button id="out">Sair</button>
     </div>
     <input type="file" id="file" accept="image/*" hidden>`);
@@ -630,24 +630,41 @@
     const f = file.files[0]; file.value = '';
     if (!f || !target) return;
     st.textContent = 'Enviando imagem…';
-    const r = await fetch('/api/upload?name=' + encodeURIComponent(f.name), { method: 'POST', body: f });
-    if (!r.ok) return st.textContent = 'Falha no envio';
-    const { src } = await r.json();
-    if (target.tagName === 'IMG') target.src = src;
+    const blob = await shrink(f);
+    const src = await api.upload(blob, f.name.replace(/\.\w+$/, '') + (blob.type === 'image/png' ? '.png' : '.jpg')).catch(() => null);
+    if (!src) return st.textContent = 'Falha no envio';
+    // Mostra a imagem local na hora; o arquivo publicado leva alguns instantes para ficar disponível
+    const preview = URL.createObjectURL(blob);
+    if (target.tagName === 'IMG') { target.src = preview; target.dataset.saved = src; }
     else {
       target.dataset.src = src;
       target.querySelector('img.js')?.remove();
-      const img = new Image(); img.className = 'js'; img.src = src;
+      const img = new Image(); img.className = 'js'; img.src = preview;
       target.prepend(img); target.classList.add('filled');
     }
     mark();
+    st.textContent = 'Imagem enviada — clique em Salvar';
   };
+
+  // Reduz fotos grandes (máx. 2000px) antes do envio
+  async function shrink(file) {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+    if (k === 1 && file.size < 1.5e6) return file;
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const type = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+    return new Promise(r => c.toBlob(r, type, .85));
+  }
 
   // Salva o HTML do deck sem o estado de execução
   const serialize = () => {
     const c = deck.cloneNode(true);
     c.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     c.querySelectorAll('img.js').forEach(el => el.remove());
+    c.querySelectorAll('img[data-saved]').forEach(el => { el.setAttribute('src', el.dataset.saved); el.removeAttribute('data-saved'); });
     c.querySelectorAll('.slide').forEach(el => { el.classList.remove('active'); el.removeAttribute('style'); });
     c.querySelectorAll('.slot').forEach(el => el.classList.remove('filled'));
     c.querySelectorAll('[data-final]').forEach(el => { el.textContent = el.dataset.final; el.removeAttribute('data-final'); });
@@ -655,9 +672,9 @@
   };
   const save = async () => {
     st.textContent = 'Salvando…';
-    const r = await fetch('/api/save', { method: 'POST', body: serialize() });
-    st.textContent = r.ok ? 'Salvo ✓' : 'Erro ao salvar';
-    if (r.ok) dirty = false;
+    const ok = await api.save(serialize()).catch(() => false);
+    st.textContent = ok ? (api.password ? 'Salvo ✓' : 'Salvo ✓ — site atualiza em ~1 min') : 'Erro ao salvar';
+    if (ok) dirty = false;
   };
   document.getElementById('save').onclick = save;
   addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); } });
@@ -667,15 +684,71 @@
   };
   document.getElementById('out').onclick = async () => {
     if (dirty && !confirm('Há alterações não salvas. Sair mesmo assim?')) return;
-    await fetch('/api/logout', { method: 'POST' }); location.href = '/';
+    await api.logout(); location.href = '/';
   };
-  document.getElementById('pw').onclick = async () => {
+  if (api.password) document.getElementById('pw').onclick = async () => {
     const current = prompt('Senha atual:'); if (!current) return;
     const next = prompt('Nova senha (mínimo 8 caracteres):'); if (!next) return;
-    const r = await fetch('/api/password', { method: 'POST', body: JSON.stringify({ current, next }) });
-    alert(r.ok ? 'Senha alterada.' : 'Não foi possível alterar: confira a senha atual e use 8+ caracteres.');
+    alert(await api.password(current, next) ? 'Senha alterada.' : 'Não foi possível alterar: confira a senha atual e use 8+ caracteres.');
   };
   addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+  // Servidor local (server.ps1): login por usuário e senha
+  function localApi() {
+    return {
+      auth: () => fetch('/api/me').then(r => r.json()).then(d => d.auth).catch(() => false),
+      upload: async (blob, name) => {
+        const r = await fetch('/api/upload?name=' + encodeURIComponent(name), { method: 'POST', body: blob });
+        if (!r.ok) throw new Error();
+        return (await r.json()).src;
+      },
+      save: html => fetch('/api/save', { method: 'POST', body: html }).then(r => r.ok),
+      logout: () => fetch('/api/logout', { method: 'POST' }),
+      password: (current, next) => fetch('/api/password', { method: 'POST', body: JSON.stringify({ current, next }) }).then(r => r.ok)
+    };
+  }
+
+  // GitHub Pages: grava direto no repositório com a chave salva no navegador
+  function githubApi() {
+    const REPO = 'jackesaito/jackesaito.github.io';
+    let token = null;
+    try { token = localStorage.getItem('gh_token'); } catch {}
+    const gh = (path, opts = {}) => fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+      ...opts, headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+    });
+    const toB64 = async blob => {
+      const url = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); });
+      return url.slice(url.indexOf(',') + 1);
+    };
+    const fromB64 = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, '')), c => c.charCodeAt(0)));
+    return {
+      auth: async () => {
+        if (!token) return false;
+        const r = await fetch(`https://api.github.com/repos/${REPO}`, { headers: { Authorization: `Bearer ${token}` } });
+        return r.ok && !!(await r.json()).permissions?.push;
+      },
+      upload: async (blob, name) => {
+        const path = `assets/uploads/${Date.now()}-${name.replace(/[^\w.\-]/g, '_')}`;
+        const r = await gh(path, { method: 'PUT', body: JSON.stringify({ message: `Imagem: ${name}`, content: await toB64(blob) }) });
+        if (!r.ok) throw new Error();
+        return path;
+      },
+      save: async deckHtml => {
+        const cur = await gh('index.html?ref=main').then(r => r.json());
+        const html = fromB64(cur.content);
+        const a = html.indexOf('<!--DECK-->'), b = html.indexOf('<!--/DECK-->');
+        if (a < 0 || b < 0) return false;
+        const next = html.slice(0, a + 11) + '\n' + deckHtml + '\n' + html.slice(b);
+        const r = await gh('index.html', { method: 'PUT', body: JSON.stringify({
+          message: 'Atualiza conteúdo do portfólio', sha: cur.sha,
+          content: await toB64(new Blob([next], { type: 'text/html' }))
+        }) });
+        return r.ok;
+      },
+      logout: async () => { try { localStorage.removeItem('gh_token'); } catch {} },
+      password: null
+    };
+  }
 })();
 </script>
 </body>

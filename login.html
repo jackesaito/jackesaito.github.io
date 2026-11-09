@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acesso — Jackeline Saito</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --black:#0e0f0e; --charcoal:#1a1c1b; --line:#333733; --white:#f4f1ea; --offwhite:#d9d5cb; --gray:#8b8f89; --olive:#7f9a78; --olive-deep:#4f6449; }
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; background: var(--black); color: var(--white); font-family: "Manrope", sans-serif; }
+  .art { position: relative; background: url("assets/foto-folha.jpg") center/cover; }
+  .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 40%, var(--black)); }
+  .art img { position: absolute; left: 48px; top: 48px; width: 44px; z-index: 1; }
+  form { align-self: center; justify-self: center; width: min(420px, 100% - 32px); animation: rise .9s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .eyebrow { font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--olive); }
+  h1 { font-family: "Cormorant Garamond", serif; font-weight: 400; font-size: 64px; line-height: 1; margin: 18px 0 48px; }
+  h1 i { color: var(--olive); }
+  label { display: block; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--gray); margin-bottom: 10px; }
+  input { width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--white); font: 300 18px "Manrope", sans-serif; padding: 10px 0 14px; margin-bottom: 32px; outline: none; transition: border-color .3s; }
+  input:focus { border-color: var(--olive); }
+  button { width: 100%; background: var(--olive-deep); color: var(--white); border: 0; padding: 18px; font: 500 13px "Manrope", sans-serif; letter-spacing: .24em; text-transform: uppercase; cursor: pointer; transition: background .3s; }
+  button:hover { background: var(--olive); }
+  .msg { min-height: 22px; margin-top: 18px; font-size: 14px; color: #c98b7f; }
+  .hint { font-size: 13px; color: var(--gray); margin: -20px 0 28px; }
+  a { display: inline-block; margin-top: 28px; font-size: 13px; color: var(--gray); text-decoration: none; letter-spacing: .1em; }
+  a:hover { color: var(--olive); }
+  .shake { animation: shake .4s; }
+  @keyframes shake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+  @media (max-width: 800px) { body { grid-template-columns: 1fr; } .art { display: none; } }
+</style>
+</head>
+<body>
+  <div class="art"><img src="assets/simbolo-claro.png" alt=""></div>
+  <form id="f">
+    <div class="eyebrow">Área restrita</div>
+    <h1>Editar<br><i>portfólio</i></h1>
+    <div id="local">
+      <label for="u">Usuário</label>
+      <input id="u" autocomplete="username">
+      <label for="p">Senha</label>
+      <input id="p" type="password" autocomplete="current-password">
+    </div>
+    <div id="online" hidden>
+      <label for="tk">Chave de acesso do GitHub</label>
+      <input id="tk" type="password" autocomplete="off" placeholder="github_pat_…">
+      <p class="hint">A chave fica salva só neste navegador.</p>
+    </div>
+    <button>Entrar</button>
+    <div class="msg" id="msg"></div>
+    <a href="/">← Ver portfólio</a>
+  </form>
+<script>
+  // No GitHub Pages não há servidor: o acesso é feito com uma chave do GitHub
+  const REPO = 'jackesaito/jackesaito.github.io';
+  const ONLINE = location.hostname.endsWith('github.io');
+  const store = { get: () => { try { return localStorage.getItem('gh_token'); } catch { return null; } },
+                  set: v => { try { localStorage.setItem('gh_token', v); } catch {} } };
+  const fail = text => {
+    msg.textContent = text;
+    f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake');
+  };
+  const checkToken = async token => {
+    const r = await fetch(`https://api.github.com/repos/${REPO}`, { headers: { Authorization: `Bearer ${token}` } });
+    return r.ok && (await r.json()).permissions?.push;
+  };
+
+  if (ONLINE) {
+    local.hidden = true; online.hidden = false;
+    const saved = store.get();
+    if (saved) checkToken(saved).then(ok => ok && (location.href = '/?editar'));
+  } else {
+    fetch('/api/me').then(r => r.json()).then(d => d.auth && (location.href = '/?editar')).catch(() => {});
+  }
+
+  document.getElementById('f').onsubmit = async e => {
+    e.preventDefault();
+    if (ONLINE) {
+      const token = tk.value.trim();
+      if (token && await checkToken(token)) { store.set(token); return location.href = '/?editar'; }
+      return fail('Chave inválida ou sem permissão de escrita neste repositório.');
+    }
+    const r = await fetch('/api/login', { method: 'POST', body: JSON.stringify({ user: u.value.trim(), pass: p.value }) });
+    if (r.ok) return location.href = '/?editar';
+    fail('Usuário ou senha incorretos.');
+  };
+</script>
+</body>
+</html>
