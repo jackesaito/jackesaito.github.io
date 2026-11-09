@@ -66,9 +66,10 @@
 
   /* ---------- 01 Capa ---------- */
   .s-cover { background: var(--black); }
-  .s-cover .photo { position: absolute; right: 0; top: 0; width: 760px; height: 100%; border: 0; }
-  .s-cover .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--black) 0%, transparent 28%); pointer-events: none; }
-  .s-cover .mark { position: absolute; left: var(--pad); top: 110px; width: 64px; opacity: .9; }
+  .s-cover .mark { position: absolute; right: 150px; top: 120px; width: 300px; opacity: .9; }
+  .s-cover .toc { position: absolute; right: var(--pad); bottom: 150px; width: 460px; list-style: none; border-top: 1px solid var(--line); }
+  .s-cover .toc li { display: flex; gap: 28px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--offwhite); }
+  .s-cover .toc li b { font-family: var(--serif); font-weight: 400; font-size: 22px; letter-spacing: 0; color: var(--olive); min-width: 32px; }
   .s-cover .body { position: absolute; left: var(--pad); bottom: 150px; width: 1000px; }
   .s-cover h1 { font-size: 196px; line-height: .9; margin: 36px 0 44px; }
   .s-cover .roles { display: flex; gap: 28px; font-size: 22px; letter-spacing: .24em; text-transform: uppercase; color: var(--offwhite); }
@@ -191,7 +192,11 @@
   .slide.active .grid .slot:nth-child(3) img { animation-delay: .2s; }
   .slide.active .grid .slot:nth-child(4) img { animation-delay: .3s; }
   .slide.active .grid .slot:nth-child(5) img { animation-delay: .4s; }
-  .slide.active.s-cover .photo img { animation: reveal 1.4s cubic-bezier(.7,0,.2,1) both, drift 9s 1.4s ease-out both; }
+  .slide.active.s-cover .toc li { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  .slide.active.s-cover .toc li:nth-child(2) { animation-delay: .3s; } .slide.active.s-cover .toc li:nth-child(3) { animation-delay: .38s; }
+  .slide.active.s-cover .toc li:nth-child(4) { animation-delay: .46s; } .slide.active.s-cover .toc li:nth-child(5) { animation-delay: .54s; }
+  .slide.active.s-cover .toc li:first-child { animation-delay: .22s; }
+  .s-about .photo img { object-position: center 30%; }
   .slide.active .mark { animation: fade 1.6s .4s both; }
   .slide.active .eyebrow::before { transform-origin: left; animation: draw .8s .2s cubic-bezier(.2,.7,.2,1) both; }
   .slide.active .s-path .row, .slide.active.s-path .row { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
@@ -229,7 +234,6 @@
   body.editing .slot, body.editing img.mark, body.editing .meter { cursor: pointer; }
   body.editing .slot:hover::after { content: "Trocar imagem"; position: absolute; inset: auto 16px 16px auto; z-index: 2; background: var(--olive-deep); color: var(--white);
     font: 500 13px var(--sans); letter-spacing: .14em; text-transform: uppercase; padding: 10px 14px; }
-  body.editing .s-cover .photo:hover::after { background: var(--olive-deep); }
   body.editing .slide * { animation: none !important; }
 
   /* ---------- Navigation UI ---------- */
@@ -257,8 +261,14 @@
 <!--DECK-->
 <!-- 01 · Capa -->
   <section class="slide s-cover">
-    <div class="slot photo" data-src="assets/jackeline-capa.jpg"><span>Fotografia profissional<br>assets/jackeline-capa.jpg</span></div>
     <img class="mark" src="assets/simbolo-claro.png" alt="">
+    <ol class="toc">
+      <li><b>01</b>Sobre mim</li>
+      <li><b>02</b>Experiências e projetos</li>
+      <li><b>03</b>Competências e ferramentas</li>
+      <li><b>04</b>Resultados e processo</li>
+      <li><b>05</b>Formação e contato</li>
+    </ol>
     <div class="body">
       <div class="eyebrow rise">Portfólio profissional</div>
       <h1 class="rise d1">Jackeline<br><i>Saito</i></h1>
